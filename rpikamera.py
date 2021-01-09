@@ -38,21 +38,21 @@ def send_mail():
     
     if len(files) > 0:
         sayi = int(files[-1][-7:-4])+1
-    filename = os.path.join(DIR, FILE_PREFIX + '%03d.jpg' % sayi)
-    with picamera.PiCamera() as camera:
-        pic = camera.capture(filename)
+    dosyaisim = os.path.join(DIR, FILE_PREFIX + '%03d.jpg' % sayi)
+    with picamera.PiCamera() as kamera:
+        pic = kamera.capture(dosyaisim)
     msg = MIMEMultipart()
     msg['From'] = gonderici
     msg['To'] = alici
     msg['Subject'] = 'Hareket algılandı'
     
-    body = 'Picture is Attached.'
+    body = 'Resim eklendi.'
     msg.attach(MIMEText(body, 'plain'))
-    attachment = open(filename, 'rb')
+    attachment = open(dosyaisim, 'rb')
     part = MIMEBase('application', 'octet-stream')
     part.set_payload((attachment).read())
     encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment; filename= %s' % filename)
+    part.add_header('Content-Disposition', 'attachment; dosyaisim= %s' % dosyaisim)
     msg.attach(part)
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
@@ -64,8 +64,8 @@ def send_mail():
 while True:
     deger = GPIO.input(11)
     if deger == 0:
-        print "No intruders", i
+        print "Hareket Algılanmadı", deger
         sleep(0.3)
     elif deger == 1:
-        print "Intruder detected", i
+        print "Hareket Algılandı", deger
         send_mail()
